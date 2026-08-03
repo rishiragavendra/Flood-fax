@@ -1,0 +1,7 @@
+# Installed only when the corresponding integration is enabled.
+# Google Earth Engine (Sentinel-2 surface-water history)
+earthengine-api==1.4.3
+# Raster/vector work for self-hosted DEM tiles instead of the OpenTopoData API
+rasterio==1.4.3
+geopandas==1.0.1
+shapely==2.0.6

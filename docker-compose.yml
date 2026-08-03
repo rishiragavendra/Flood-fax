@@ -1,0 +1,39 @@
+# One app container serves the web UI, the API, and PDF reports on port 8000.
+# Postgres is optional — without it, reports persist as JSON on a volume.
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file: ./backend/.env
+    environment:
+      # Comment DATABASE_URL out to use the zero-infra JSON store instead.
+      DATABASE_URL: postgresql://floodfax:floodfax@db:5432/floodfax
+      CORS_ORIGINS: http://localhost:8000
+      PUBLIC_BASE_URL: http://localhost:8000
+    ports: ["8000:8000"]
+    volumes:
+      - appdata:/srv/.data
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgis/postgis:16-3.4
+    environment:
+      POSTGRES_USER: floodfax
+      POSTGRES_PASSWORD: floodfax
+      POSTGRES_DB: floodfax
+    ports: ["5432:5432"]
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./infra/schema.sql:/docker-entrypoint-initdb.d/10-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U floodfax"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:
+  appdata:
