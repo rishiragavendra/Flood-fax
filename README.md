@@ -45,7 +45,7 @@ is public and unauthenticated.
 UI, API, and PDF reports — from a single FastAPI process:
 
 ```bash
-./run.sh
+run.bat
 # everything on http://localhost:8000   (API docs at /docs)
 ```
 
